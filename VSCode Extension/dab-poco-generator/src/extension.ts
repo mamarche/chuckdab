@@ -45,7 +45,39 @@ async function generatePocoClasses() {
     let pool: sql.ConnectionPool | null = null;
 
     try {
+        
         pool = await sql.connect(connectionString);
+
+        const folderOptions: vscode.OpenDialogOptions = {
+            canSelectMany: false,
+            openLabel: 'Select folder to save class',
+            canSelectFolders: true,
+            canSelectFiles: false
+        };
+
+        const folderUri = await vscode.window.showOpenDialog(folderOptions);
+
+        if (!folderUri || folderUri.length === 0) {
+            vscode.window.showErrorMessage('No folder selected.');
+            return;
+        }
+
+        const selectedFolderPath = folderUri[0].fsPath;
+
+        // ask user for the namespace to add to the generated classes
+        const namespace = await vscode.window.showInputBox({
+            prompt: 'Enter the namespace for the generated classes'
+        });
+
+        const interfaceContent = generateInterfaceClass(namespace);
+        const interfaceFilePath = path.join(selectedFolderPath, `IDataItem.cs`);
+
+        fs.writeFileSync(interfaceFilePath, interfaceContent);
+
+        const baseClassContent = generateDataItemBaseClass(namespace);
+        const baseClassFilePath = path.join(selectedFolderPath, `DataItem.cs`);
+
+        fs.writeFileSync(baseClassFilePath, baseClassContent);
 
         for (const entityName in config.entities) {
             const entity = config.entities[entityName];
@@ -59,29 +91,13 @@ async function generatePocoClasses() {
             // remove square brackets if present
             tableName = tableName.replace('[', '').replace(']', '');
 
-            const className = entityName;
+            const className = entity.graphql.type.singular;
 
             const result = await pool.request()
                 .query(`SELECT COLUMN_NAME, DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '${tableName}'`);
             const columns = result.recordset;
 
-            const classContent = generatePocoClass(className, columns);
-
-            const folderOptions: vscode.OpenDialogOptions = {
-                canSelectMany: false,
-                openLabel: 'Select folder to save class',
-                canSelectFolders: true,
-                canSelectFiles: false
-            };
-
-            const folderUri = await vscode.window.showOpenDialog(folderOptions);
-
-            if (!folderUri || folderUri.length === 0) {
-                vscode.window.showErrorMessage('No folder selected.');
-                return;
-            }
-
-            const selectedFolderPath = folderUri[0].fsPath;
+            const classContent =  generatePocoClass(className, columns, namespace, tableName);
             const classFilePath = path.join(selectedFolderPath, `${className}.cs`);
 
             fs.writeFileSync(classFilePath, classContent);
@@ -101,8 +117,24 @@ async function generatePocoClasses() {
     }
 }
 
-function generatePocoClass(className: string, columns: any[]): string {
-    let classContent = `public class ${className} {\n`;
+function generateInterfaceClass(namespace: string = ''): string {
+    let classContent =  `namespace ${namespace};` + '\n\n' + `public interface IDataItem {\n`;
+    classContent += `public int Id {get; set;}\n`;
+    classContent += `}\n`;
+    return classContent;
+}
+
+function generateDataItemBaseClass(namespace: string = ''): string {
+    let classContent =  `namespace ${namespace};` + '\n\n' + `public class DataItem : IDataItem {\n`;
+    classContent += `public int Id {get; set;}\n`;
+    classContent += `}\n`;
+    return classContent;
+}
+
+function generatePocoClass(className: string, columns: any[], namespace: string = '', tableName: string =''): string {
+    let classContent = `using System.ComponentModel.DataAnnotations.Schema;\n\nnamespace ${namespace};\n\n`;
+    classContent += `[Table("${tableName}")]\n`;
+    classContent += `public class ${className} : DataItem {\n`;
 
     columns.forEach(column => {
         const propertyName = column.COLUMN_NAME;

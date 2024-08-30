@@ -1,8 +1,25 @@
-﻿namespace ChuckKnowledge.Client;
+﻿
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Reflection;
+using System.Text.Json;
+using ChuckKnowledge.Core;
+
+namespace ChuckKnowledge.Client;
 
 public class ChuckClient
 {
-    
+    private string _dabEndpoint;
+
+    public ChuckClient(string endpoint)
+    {
+        _dabEndpoint = endpoint;
+        if (!_dabEndpoint.EndsWith("/"))
+        {
+            _dabEndpoint += "/";
+        }
+        _dabEndpoint += "api";
+    }
+
     public async Task<string> GetRandomJoke()
     {
         using (var _httpClient = new HttpClient())
@@ -15,4 +32,34 @@ public class ChuckClient
         }
         
     }
+
+    public async Task<TItem> GetItemAsync<TItem>(int id) where TItem : DataItem
+    {
+        using (var _httpClient = new HttpClient())
+        {
+            string entityName = GetTableName<TItem>();
+            var url = $"{_dabEndpoint}/{entityName}/Id/{id}";
+
+            var response = await _httpClient.GetAsync(url);
+            response.EnsureSuccessStatusCode();
+            var content = await response.Content.ReadAsStringAsync();
+
+            //TODO: the content is 'value' (collection) of TItem. Need to deserialize it and take the first
+
+            return JsonSerializer.Deserialize<TItem>(content);
+        }
+    }
+
+    public string GetTableName<TItem>()
+        {
+            var tableAttribute = typeof(TItem).GetCustomAttribute<TableAttribute>();
+            if (tableAttribute != null)
+            {
+                return tableAttribute.Name;
+            }
+            else
+            {
+                throw new InvalidOperationException($"The type {typeof(TItem).Name} does not have a Table attribute.");
+            }
+        }
 }

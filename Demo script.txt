@@ -11,5 +11,7 @@ dotnet new console -n ChuckKnowledge.App -f net8.0
 cd ChuckKnowledge.App
 dotnet add reference ../ChuckKnowledge.Core
 dotnet add reference ../ChuckKnowledge.Client
+cd ChuckKnowledge.Client
+dotnet add reference ../ChuckKnowledge.Core
 
 # Step 5: Use the POCO Generator extension to generate the classes in ChuckKnowledge.Core

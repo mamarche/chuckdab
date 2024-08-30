@@ -6,12 +6,12 @@ param dataApiBuilderConfigFile string = 'dab-config.json'
 param containerAppName string = 'aca-wpc2024-chuck'
 param storageAccountName string = 'stwpc2024chuck'
 param containerappEnvironmentName string = 'cae-wpc2024-chuck'
-
 param shareName string = 'config'
 param configShareName string = 'config-share'
 param configVolumeName string = 'config-volume'
-
 param logAnalyticsWorkspaceName string = 'law-wpc2024-chuck'
+
+param databaseConnectionString string = 'Server=tcp:chuckdata.database.windows.net,1433;Initial Catalog=chuckdata;Persist Security Info=False;User ID=marcello;Password=Wpc2024!;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;'
 
 resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2021-06-01' = {
   name: logAnalyticsWorkspaceName
@@ -163,7 +163,7 @@ resource containerApp_resource 'Microsoft.App/containerapps@2024-03-01' = {
           env: [
             {
               name: 'DATABASE_CONNECTION_STRING'
-              value: '[connectionstring-here]'
+              value: databaseConnectionString
             }
           ]
           resources: {

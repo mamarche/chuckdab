@@ -30,16 +30,68 @@
     }
   },
   "entities": {
-    "EndpointsResources": {
+    "Categories": {
       "source": {
-        "object": "[dbo].[EndpointsResources]",
+        "object": "[dbo].[Categories]",
         "type": "table"
       },
       "graphql": {
         "enabled": true,
         "type": {
-          "singular": "EndpointsResources",
-          "plural": "EndpointsResources"
+          "singular": "Category",
+          "plural": "Categories"
+        }
+      },
+      "rest": {
+        "enabled": true
+      },
+      "permissions": [
+        {
+          "role": "anonymous",
+          "actions": [
+            {
+              "action": "*"
+            }
+          ]
+        }
+      ]
+    },
+    "Facts": {
+      "source": {
+        "object": "[dbo].[Facts]",
+        "type": "table"
+      },
+      "graphql": {
+        "enabled": true,
+        "type": {
+          "singular": "Fact",
+          "plural": "Facts"
+        }
+      },
+      "rest": {
+        "enabled": true
+      },
+      "permissions": [
+        {
+          "role": "anonymous",
+          "actions": [
+            {
+              "action": "*"
+            }
+          ]
+        }
+      ]
+    },
+    "UserComments": {
+      "source": {
+        "object": "[dbo].[UserComments]",
+        "type": "table"
+      },
+      "graphql": {
+        "enabled": true,
+        "type": {
+          "singular": "UserComment",
+          "plural": "UserComments"
         }
       },
       "rest": {

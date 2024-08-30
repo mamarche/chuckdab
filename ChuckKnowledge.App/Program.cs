@@ -1,7 +1,6 @@
-﻿using System;
-using System.Threading.Tasks;
-using System.Text.Json;
-using ChuckKnowledge.Client;
+﻿using ChuckKnowledge.Client;
+using ChuckKnowledge.Core;
+
 
 namespace ChuckKnowledge.App
 {
@@ -9,9 +8,11 @@ namespace ChuckKnowledge.App
     {
         static async Task Main(string[] args)
         {
-            var client = new ChuckClient();
-            var joke = await client.GetRandomJoke();
-            Console.WriteLine(joke);
+            var client = new ChuckClient(
+                "https://aca-wpc2024-chuck.nicerock-92961ea4.italynorth.azurecontainerapps.io/"
+            );
+            var fact = await client.GetItemAsync<Fact>(1);
+            Console.WriteLine(fact.FactDescription);
 
             Console.WriteLine("Press any key to exit...");
             Console.ReadKey();
