@@ -47,5 +47,9 @@
   ],
   "dependencies": {
     "mssql": "^11.0.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mamarche/chuckdab.git"
   }
 }
