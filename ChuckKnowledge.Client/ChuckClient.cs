@@ -33,7 +33,7 @@ public class ChuckClient
         
     }
 
-    public async Task<TItem> GetItemAsync<TItem>(int id) where TItem : DataItem
+    public async Task<TItem?> GetItemAsync<TItem>(int id) where TItem : DataItem
     {
         using (var _httpClient = new HttpClient())
         {
@@ -44,9 +44,9 @@ public class ChuckClient
             response.EnsureSuccessStatusCode();
             var content = await response.Content.ReadAsStringAsync();
 
-            //TODO: the content is 'value' (collection) of TItem. Need to deserialize it and take the first
+            var dataItems = JsonSerializer.Deserialize<DataItemsCollection<TItem>>(content);
 
-            return JsonSerializer.Deserialize<TItem>(content);
+            return dataItems.value?.FirstOrDefault();
         }
     }
 
