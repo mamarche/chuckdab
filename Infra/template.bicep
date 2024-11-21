@@ -3,15 +3,15 @@ param region string = 'italynorth'
 param dataApiBuilderImage string = 'mcr.microsoft.com/azure-databases/data-api-builder:latest'
 param dataApiBuilderConfigFile string = 'dab-config.json'
 
-param containerAppName string = 'aca-wpc2024-chuck'
-param storageAccountName string = 'stwpc2024chuck'
-param containerappEnvironmentName string = 'cae-wpc2024-chuck'
+param containerAppName string = '[the name of the container app here]' // e.g. 'aca-wpc2024-chuck'
+param storageAccountName string = '[the storage account name here]' // e.g. 'stwpc2024chuck'
+param containerappEnvironmentName string = '[the name of the container app environment here]' // e.g. 'cae-wpc2024-chuck'
 param shareName string = 'config'
 param configShareName string = 'config-share'
 param configVolumeName string = 'config-volume'
-param logAnalyticsWorkspaceName string = 'law-wpc2024-chuck'
+param logAnalyticsWorkspaceName string = '[the name of the log analytics workspace here]' // e.g. 'law-wpc2024-chuck'
 
-param databaseConnectionString string = 'Server=tcp:chuckdata.database.windows.net,1433;Initial Catalog=chuckdata;Persist Security Info=False;User ID=marcello;Password=Wpc2024!;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;'
+param databaseConnectionString string = '[the database connection string here]' 
 
 resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2021-06-01' = {
   name: logAnalyticsWorkspaceName
