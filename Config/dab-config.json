@@ -80,7 +80,21 @@
             }
           ]
         }
-      ]
+      ],
+      "relationships": {
+        "Category": {
+          "cardinality": "one",
+          "target.entity": "Categories",
+          "source.fields": [
+            "CategoryId"
+          ],
+          "target.fields": [
+            "Id"
+          ],
+          "linking.source.fields": [],
+          "linking.target.fields": []
+        }
+      }
     },
     "UserComments": {
       "source": {
